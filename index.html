@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Antek - tester linków</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: monospace;
+      background-color: black;
+      color: lime;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin-top: 50px;
+      font-size: 2rem;
+    }
+
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 1rem;
+    }
+
+    .flying {
+      position: absolute;
+      width: 120px;
+      animation: fly 8s linear infinite;
+      z-index: 999;
+    }
+
+    @keyframes fly {
+      0% { transform: translate(0, 100vh); }
+      100% { transform: translate(100vw, -100vh); }
+    }
+
+    #counter {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Skaner linków</h1>
+  <input type="text" id="linkInput" placeholder="Wklej link..." />
+  <button onclick="startChaos()">Przetestuj link</button>
+  <div id="counter"></div>
+
+  <audio id="sound" src="https://www.myinstants.com/media/sounds/troll-song.mp3" preload="auto"></audio>
+
+  <script>
+    // Licznik wejść
+    const counterKey = "visits";
+    const counterEl = document.getElementById("counter");
+    let visits = localStorage.getItem(counterKey);
+    visits = visits ? parseInt(visits) + 1 : 1;
+    localStorage.setItem(counterKey, visits);
+    counterEl.textContent = `👁️ Wejścia na stronę: ${visits}`;
+
+    // Lista zabawnych obrazków (linki bez hostowania)
+    const imageUrls = [
+      "https://i.imgur.com/0rZbZBn.png", // ptoszek
+      "https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif", // troll
+      "https://i.imgur.com/v4jvG5D.gif", // dancing banana
+      "https://i.imgur.com/8fFM4QI.gif"  // crazy cat
+    ];
+
+    function createFlyingImage() {
+      const img = document.createElement("img");
+      img.src = imageUrls[Math.floor(Math.random() * imageUrls.length)];
+      img.className = "flying";
+      img.style.top = `${Math.random() * window.innerHeight}px`;
+      img.style.left = `${Math.random() * window.innerWidth}px`;
+      document.body.appendChild(img);
+      setTimeout(() => img.remove(), 10000);
+    }
+
+    function flashBackground() {
+      const colors = ["red", "blue", "lime", "magenta", "yellow", "black"];
+      let i = 0;
+      const interval = setInterval(() => {
+        document.body.style.backgroundColor = colors[i % colors.length];
+        i++;
+        if (i > 30) clearInterval(interval);
+      }, 100);
+    }
+
+    function showPopups() {
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank", "width=300,height=200");
+        }, i * 500);
+      }
+    }
+
+    function startChaos() {
+      alert("⏳ Trwa analiza linku...");
+      flashBackground();
+      document.getElementById("sound").play();
+      showPopups();
+
+      for (let i = 0; i < 20; i++) {
+        setTimeout(createFlyingImage, i * 300);
+      }
+    }
+  </script>
+</body>
+</html>
