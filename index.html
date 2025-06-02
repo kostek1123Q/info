@@ -2,153 +2,72 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Antek - tester linków</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Antek - Info</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      background-color: black;
+      padding: 20px;
+      font-family: monospace, monospace;
+      background-color: #000;
       color: lime;
-      font-family: monospace;
-      overflow: hidden;
-      text-align: center;
-      height: 100vh;
+      line-height: 1.6;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
     }
     h1 {
       font-size: 6vw;
-      margin: 20px 10px;
-    }
-    input, button {
-      font-size: 4vw;
-      padding: 12px;
-      margin: 10px auto;
-      display: block;
-      width: 80%;
-      max-width: 400px;
-      border: 2px solid lime;
-      background: black;
-      color: lime;
       text-align: center;
-      border-radius: 8px;
+      margin-bottom: 1rem;
     }
-    button:hover {
-      background-color: lime;
-      color: black;
-      cursor: pointer;
-    }
-    .flying {
-      position: absolute;
-      width: 80px;
-      animation: fly 6s linear infinite;
-      z-index: 999;
-      pointer-events: none;
-    }
-    @keyframes fly {
-      0% {
-        transform: translateY(100vh) rotate(0deg);
-        left: 0;
-      }
-      100% {
-        transform: translateY(-150vh) rotate(1080deg);
-        left: 100vw;
-      }
-    }
-    #counter {
-      margin-top: 20px;
+    p {
       font-size: 4vw;
+      margin-bottom: 1rem;
+    }
+    a {
+      color: lime;
+      text-decoration: underline;
     }
     @media (min-width: 768px) {
-      h1 { font-size: 3rem; }
-      input, button { font-size: 1.2rem; }
-      #counter { font-size: 1rem; }
+      h1 {
+        font-size: 3rem;
+      }
+      p {
+        font-size: 1.25rem;
+      }
+    }
+    button {
+      display: block;
+      margin: 30px auto 0;
+      background: lime;
+      border: none;
+      color: black;
+      padding: 12px 24px;
+      font-size: 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #aaffaa;
     }
   </style>
 </head>
 <body>
-  <h1>🔍 Antek - tester linków</h1>
-  <input type="text" id="linkInput" placeholder="Wklej link..." />
-  <button onclick="startChaos()">Przetestuj link</button>
-  <div id="counter"></div>
-
-  <audio id="audio" src="https://www.myinstants.com/media/sounds/troll-song.mp3" preload="auto"></audio>
+  <h1>Antek - Info</h1>
+  <p>Ta strona jest prostym symulatorem skanera linków, który nie sprawdza faktycznie żadnych adresów, ale generuje efekt „ptoszka” — wyświetla latające obrazki, odtwarza dźwięk oraz otwiera w nowych oknach losowe strony z losowymi zdjęciami co kilka sekund.</p>
+  
+  <p>Wchodząc na stronę główną <a href="index.html">Antek - tester linków</a>, możesz wkleić dowolny link i kliknąć „Przetestuj link”, aby uruchomić tę zabawną symulację.</p>
+  
+  <p>Strona działa zarówno na komputerach, jak i urządzeniach mobilnych. Nie zbiera żadnych danych osobowych — jedynie lokalnie zapisuje liczbę odwiedzin w Twojej przeglądarce.</p>
+  
+  <p>To czysta rozrywka i prank dla znajomych! Pamiętaj, aby korzystać z niej odpowiedzialnie.</p>
+  
+  <button onclick="goBack()">Wróć do testera</button>
 
   <script>
-    // Licznik wejść (localStorage)
-    const counterKey = "visits";
-    const counterEl = document.getElementById("counter");
-    let visits = localStorage.getItem(counterKey);
-    visits = visits ? parseInt(visits) + 1 : 1;
-    localStorage.setItem(counterKey, visits);
-    counterEl.textContent = `👁️ Wejścia na stronę: ${visits}`;
-
-    // Obrazki z neta (bez potrzeby hostowania)
-    const imageUrls = [
-      "https://i.imgur.com/0rZbZBn.png", // ptoszek
-      "https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif",
-      "https://i.imgur.com/v4jvG5D.gif",
-      "https://i.imgur.com/8fFM4QI.gif"
-    ];
-
-    function createFlyingImage() {
-      const img = document.createElement("img");
-      img.src = imageUrls[Math.floor(Math.random() * imageUrls.length)];
-      img.className = "flying";
-      img.style.top = `${Math.random() * window.innerHeight}px`;
-      img.style.left = `${Math.random() * window.innerWidth}px`;
-      document.body.appendChild(img);
-      setTimeout(() => img.remove(), 8000);
-    }
-
-    function flashBackground() {
-      const colors = ["black", "red", "blue", "lime", "magenta", "yellow"];
-      let i = 0;
-      const interval = setInterval(() => {
-        document.body.style.backgroundColor = colors[i % colors.length];
-        i++;
-        if (i > 25) {
-          clearInterval(interval);
-          document.body.style.backgroundColor = "black";
-        }
-      }, 120);
-    }
-
-    // Otwiera 20 losowych stron co 3 sekundy
-    function showPopups() {
-      const sites = [
-        "https://en.wikipedia.org/wiki/Special:Random",
-        "https://unsplash.com/random",
-        "https://picsum.photos/200",
-        "https://placekitten.com/200/300",
-        "https://www.reddit.com/r/random",
-        "https://www.boredpanda.com/",
-        "https://www.theuselessweb.com/",
-        "https://thispersondoesnotexist.com/",
-        "https://randomwordgenerator.com/",
-        "https://www.funnyjunk.com/"
-      ];
-
-      let count = 0;
-      const interval = setInterval(() => {
-        if (count >= 20) {
-          clearInterval(interval);
-          return;
-        }
-        const site = sites[Math.floor(Math.random() * sites.length)];
-        const randParam = Math.floor(Math.random() * 100000);
-        window.open(`${site}?img=${randParam}`, "_blank");
-        count++;
-      }, 3000);
-    }
-
-    function startChaos() {
-      alert("Trwa analiza... 🔍");
-      document.getElementById("audio").play();
-      flashBackground();
-      showPopups();
-      for (let i = 0; i < 15; i++) {
-        setTimeout(createFlyingImage, i * 250);
-      }
+    function goBack() {
+      window.location.href = 'index.html';
     }
   </script>
 </body>
