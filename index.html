@@ -2,56 +2,79 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Antek - tester linków</title>
   <style>
-    body {
+    html, body {
       margin: 0;
       padding: 0;
-      font-family: monospace;
       background-color: black;
       color: lime;
-      text-align: center;
+      font-family: monospace;
       overflow: hidden;
+      text-align: center;
+      height: 100vh;
     }
-
     h1 {
-      margin-top: 50px;
-      font-size: 2rem;
+      font-size: 6vw;
+      margin: 20px 10px;
     }
-
     input, button {
-      margin: 10px;
-      padding: 10px;
-      font-size: 1rem;
+      font-size: 4vw;
+      padding: 12px;
+      margin: 10px auto;
+      display: block;
+      width: 80%;
+      max-width: 400px;
+      border: 2px solid lime;
+      background: black;
+      color: lime;
+      text-align: center;
+      border-radius: 8px;
     }
-
+    button:hover {
+      background-color: lime;
+      color: black;
+      cursor: pointer;
+    }
     .flying {
       position: absolute;
-      width: 120px;
-      animation: fly 8s linear infinite;
+      width: 80px;
+      animation: fly 6s linear infinite;
       z-index: 999;
+      pointer-events: none;
     }
-
     @keyframes fly {
-      0% { transform: translate(0, 100vh); }
-      100% { transform: translate(100vw, -100vh); }
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        left: 0;
+      }
+      100% {
+        transform: translateY(-150vh) rotate(1080deg);
+        left: 100vw;
+      }
     }
-
     #counter {
       margin-top: 20px;
+      font-size: 4vw;
+    }
+    @media (min-width: 768px) {
+      h1 { font-size: 3rem; }
+      input, button { font-size: 1.2rem; }
+      #counter { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
-  <h1>🔍 Skaner linków</h1>
+  <h1>🔍 Antek - tester linków</h1>
   <input type="text" id="linkInput" placeholder="Wklej link..." />
   <button onclick="startChaos()">Przetestuj link</button>
   <div id="counter"></div>
 
-  <audio id="sound" src="https://www.myinstants.com/media/sounds/troll-song.mp3" preload="auto"></audio>
+  <audio id="audio" src="https://www.myinstants.com/media/sounds/troll-song.mp3" preload="auto"></audio>
 
   <script>
-    // Licznik wejść
+    // Licznik wejść (localStorage)
     const counterKey = "visits";
     const counterEl = document.getElementById("counter");
     let visits = localStorage.getItem(counterKey);
@@ -59,12 +82,12 @@
     localStorage.setItem(counterKey, visits);
     counterEl.textContent = `👁️ Wejścia na stronę: ${visits}`;
 
-    // Lista zabawnych obrazków (linki bez hostowania)
+    // Obrazki z neta (bez potrzeby hostowania)
     const imageUrls = [
       "https://i.imgur.com/0rZbZBn.png", // ptoszek
-      "https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif", // troll
-      "https://i.imgur.com/v4jvG5D.gif", // dancing banana
-      "https://i.imgur.com/8fFM4QI.gif"  // crazy cat
+      "https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif",
+      "https://i.imgur.com/v4jvG5D.gif",
+      "https://i.imgur.com/8fFM4QI.gif"
     ];
 
     function createFlyingImage() {
@@ -74,35 +97,57 @@
       img.style.top = `${Math.random() * window.innerHeight}px`;
       img.style.left = `${Math.random() * window.innerWidth}px`;
       document.body.appendChild(img);
-      setTimeout(() => img.remove(), 10000);
+      setTimeout(() => img.remove(), 8000);
     }
 
     function flashBackground() {
-      const colors = ["red", "blue", "lime", "magenta", "yellow", "black"];
+      const colors = ["black", "red", "blue", "lime", "magenta", "yellow"];
       let i = 0;
       const interval = setInterval(() => {
         document.body.style.backgroundColor = colors[i % colors.length];
         i++;
-        if (i > 30) clearInterval(interval);
-      }, 100);
+        if (i > 25) {
+          clearInterval(interval);
+          document.body.style.backgroundColor = "black";
+        }
+      }, 120);
     }
 
+    // Otwiera 20 losowych stron co 3 sekundy
     function showPopups() {
-      for (let i = 0; i < 5; i++) {
-        setTimeout(() => {
-          window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank", "width=300,height=200");
-        }, i * 500);
-      }
+      const sites = [
+        "https://en.wikipedia.org/wiki/Special:Random",
+        "https://unsplash.com/random",
+        "https://picsum.photos/200",
+        "https://placekitten.com/200/300",
+        "https://www.reddit.com/r/random",
+        "https://www.boredpanda.com/",
+        "https://www.theuselessweb.com/",
+        "https://thispersondoesnotexist.com/",
+        "https://randomwordgenerator.com/",
+        "https://www.funnyjunk.com/"
+      ];
+
+      let count = 0;
+      const interval = setInterval(() => {
+        if (count >= 20) {
+          clearInterval(interval);
+          return;
+        }
+        const site = sites[Math.floor(Math.random() * sites.length)];
+        const randParam = Math.floor(Math.random() * 100000);
+        window.open(`${site}?img=${randParam}`, "_blank");
+        count++;
+      }, 3000);
     }
 
     function startChaos() {
-      alert("⏳ Trwa analiza linku...");
+      alert("Trwa analiza... 🔍");
+      document.getElementById("audio").play();
       flashBackground();
-      document.getElementById("sound").play();
       showPopups();
-
-      for (let i = 0; i < 20; i++) {
-        setTimeout(createFlyingImage, i * 300);
+      for (let i = 0; i < 15; i++) {
+        setTimeout(createFlyingImage, i * 250);
       }
     }
   </script>
